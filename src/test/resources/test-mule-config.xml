@@ -1,0 +1,19 @@
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:training="http://www.mulesoft.org/schema/mule/training"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+          http://www.mulesoft.org/schema/mule/training http://www.mulesoft.org/schema/mule/training/current/mule-training.xsd">
+
+    <training:config name="config" configId="configId">
+        <training:connection requiredParameter="aValue" />
+    </training:config>
+
+    <flow name="sayHiFlow">
+        <training:say-hi person="Mariano Gonzalez"/>
+    </flow>
+
+    <flow name="retrieveInfoFlow">
+        <training:retrieve-info config-ref="config"/>
+    </flow>
+
+</mule>
