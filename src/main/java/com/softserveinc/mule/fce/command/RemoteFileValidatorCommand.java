@@ -5,30 +5,34 @@ import java.io.IOException;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import com.softserveinc.mule.fce.FCEConfiguration;
 import com.softserveinc.mule.fce.icommand.IRemoteFileValidatorCommand;
 
+import org.mule.runtime.extension.api.annotation.param.Config;
+
 public class RemoteFileValidatorCommand implements IRemoteFileValidatorCommand {
-	private static FTPClient ftpClient = new FTPClient();
+	private static final FTPClient ftpClient = new FTPClient();
 	private static FTPFile remoteFile;
-	private static String output = "";
-	
+	private static String path = new String();
+
 	@Override
-	public String remoteFileValidateOperation(String host, int port, String username, String password, String remoteAbsolutePath, String fileName) throws IOException {
-		ftpClient.connect(host, port);
-		ftpClient.login(username, password);
-		if (remoteAbsolutePath.endsWith("/")) {
-			remoteFile = ftpClient.mlistFile(remoteAbsolutePath + fileName);
+	public String remoteFileValidateOperation(@Config FCEConfiguration config, boolean isConfig, String host, int port, 
+			String username, String password, String remoteAbsolutePath, String fileName) throws IOException {
+		if (!isConfig) {
+			ftpClient.connect(host, port);
+			ftpClient.login(username, password);
+			path = remoteAbsolutePath;
 		} else {
-			remoteFile = ftpClient.mlistFile(remoteAbsolutePath + "/" + fileName);
+			ftpClient.connect(config.ftpName, config.ftpPort);
+			ftpClient.login(config.ftpUser, config.ftpPassword);
+			path = config.ftpWorkingDir;
 		}
-		if (remoteFile != null) {
-			output = "File " + remoteFile.getName() + " exists!";
-		} else {
-			output = "File " + remoteAbsolutePath + fileName + " does not exists";
-		}
+		
+		remoteFile = path.endsWith("/") ? ftpClient.mlistFile(path + fileName) : ftpClient.mlistFile(path + "/" + fileName);
+		
+		String output = remoteFile != null ? "File " + remoteFile.getName() + " exists!" : "File " + path + fileName + " does not exists!";
 
 		ftpClient.disconnect();
 		return output;
 	}
-
 }

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.softserve.mule.fce</groupId>
 	<artifactId>file-connector-extended</artifactId>
-	<version>0.1.1</version>
+	<version>0.1.8</version>
 	<packaging>mule-extension</packaging>
 	<name>Extension</name>
 
